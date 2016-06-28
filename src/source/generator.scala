@@ -28,6 +28,8 @@ import scala.collection.mutable
 package object generatorTools {
 
   case class Spec(
+                   midlOutFolder : Option[File],
+                   midlPackage : Option[String],
                    javaOutFolder: Option[File],
                    javaPackage: Option[String],
                    javaIdentStyle: JavaIdentStyle,
@@ -178,6 +180,12 @@ package object generatorTools {
         }
         new JavaGenerator(spec).generate(idl)
       }
+      if (spec.midlOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("Midl", spec.midlOutFolder.get)
+        }
+        new MIDLGenerator(spec).generate(idl)
+      }
       if (spec.jniOutFolder.isDefined) {
         if (!spec.skipGeneration) {
           createFolder("JNI C++", spec.jniOutFolder.get)
@@ -256,6 +264,7 @@ abstract class Generator(spec: Spec)
   val idCpp = spec.cppIdentStyle
   val idJava = spec.javaIdentStyle
   val idObjc = spec.objcIdentStyle
+  val idMidl = spec.javaIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {

@@ -36,7 +36,9 @@ object Main {
     var cppNnType: Option[String] = None
     var cppNnCheckExpression: Option[String] = None
     var javaOutFolder: Option[File] = None
+    var midlOutFolder: Option[File] = None
     var javaPackage: Option[String] = None
+    var midlPackage: Option[String] = None
     var javaCppException: Option[String] = None
     var javaAnnotation: Option[String] = None
     var javaNullableAnnotation: Option[String] = None
@@ -98,6 +100,10 @@ object Main {
         .text("The output for the Java files (Generator disabled if unspecified).")
       opt[String]("java-package").valueName("...").foreach(x => javaPackage = Some(x))
         .text("The package name to use for generated Java classes.")
+      opt[File]("midl-out").valueName("<out-folder>").foreach(x => midlOutFolder = Some(x))
+        .text("The output for the Midl/WinRT files (Generator disabled if unspecified).")
+      opt[String]("midl-package").valueName("...").foreach(x => midlPackage = Some(x))
+        .text("The namespace name to use for generated Midl classes")
       opt[String]("java-cpp-exception").valueName("<exception-class>").foreach(x => javaCppException = Some(x))
         .text("The type for translated C++ exceptions in Java (default: java.lang.RuntimeException that is not checked)")
       opt[String]("java-annotation").valueName("<annotation-class>").foreach(x => javaAnnotation = Some(x))
@@ -272,6 +278,8 @@ object Main {
     }
 
     val outSpec = Spec(
+      midlOutFolder,
+      midlPackage,
       javaOutFolder,
       javaPackage,
       javaIdentStyle,
